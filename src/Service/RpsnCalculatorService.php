@@ -5,12 +5,11 @@ namespace App\Service;
 use App\Api\ApiConnector;
 use App\Api\SoapConnector;
 use App\Entity\Calculator;
+use App\Exception\CalculatorException;
 use App\Helper\XlsxFileHelper;
 
 class RpsnCalculatorService
 {
-    private const XLSX_FILE_RATES = 'http://www.toppojisteni.net/zadani/sazby.xlsx';
-
     /**
      * @var ApiConnector
      */
@@ -33,9 +32,15 @@ class RpsnCalculatorService
         $this->xlsxFileHelper = $xlsxFileHelper;
     }
 
+    /**
+     * @throws CalculatorException
+     */
     public function getCalculation(Calculator $calculator): array
     {
         $hash = $this->apiConnector->getHashByBirthNumber($calculator->getBirthNumber());
+        if (!$hash) {
+            throw new CalculatorException('Invalid hash parameter');
+        }
         $calculator->setHash($hash);
 
         $firstCalculator = $this->soapConnector->getRatesByData(clone $calculator);

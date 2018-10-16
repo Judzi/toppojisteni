@@ -27,7 +27,7 @@ class ApiConnector
         $this->httpClient = $httpClient;
     }
 
-    public function getHashByBirthNumber(string $birthNumber)
+    public function getHashByBirthNumber(string $birthNumber): ?string
     {
         $request = $this->messageFactory->createRequest(
             'GET',
@@ -39,7 +39,7 @@ class ApiConnector
         return $response['hash'];
     }
 
-    public function getRatesByRepaymentAndAmount(int $repaymentTime, int $amount)
+    public function getRatesByRepaymentAndAmount(int $repaymentTime, int $amount): ?array
     {
         $request = $this->messageFactory->createRequest(
             'POST',
@@ -67,11 +67,11 @@ class ApiConnector
         return $response;
     }
 
-    private function parseResponse(MessageInterface $response)
+    private function parseResponse(MessageInterface $response): ?array
     {
         if (null !== $response) {
             return json_decode($response->getBody(), true);
         }
-        return '';
+        return null;
     }
 }

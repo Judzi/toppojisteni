@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Calculator;
+use App\Exception\CalculatorException;
 use App\Form\RpsnCalculatorType;
 use App\Service\RpsnCalculatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,7 +32,11 @@ class CalculatorController extends AbstractController
         $form = $this->createForm(RpsnCalculatorType::class, $calculator);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $results = $this->calculatorService->getCalculation($calculator);
+            try {
+                $results = $this->calculatorService->getCalculation($calculator);
+            } catch (CalculatorException $e) {
+                $results = [];
+            }
         }
 
         return $this->render('calculator/index.html.twig', [
